@@ -607,7 +607,7 @@ addEventListener("hashchange",()=>route());route();
 const slug=s=>String(s||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,ch=>({ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u",â:"a",î:"i",û:"u"}[ch])).normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const STOP=new Set(["fk","sk","fsk","as","a","s","futbol","kulubu","spor","jk","sporu"]);
 const toks=s=>slug(s).split("-").filter(t=>t&&!STOP.has(t));
-function sim(a,b){if(slug(a)===slug(b))return 100;const A=toks(a),B=toks(b);if(!A.length||!B.length)return 0;const SA=new Set(A),SB=new Set(B);
+function sim(a,b){if(slug(a)===slug(b))return 100;const ca=slug(a).replace(/-/g,""),cb=slug(b).replace(/-/g,"");if(ca===cb)return 95;if(Math.min(ca.length,cb.length)>=6&&(ca.endsWith(cb)||cb.endsWith(ca)))return 80;const A=toks(a),B=toks(b);if(!A.length||!B.length)return 0;const SA=new Set(A),SB=new Set(B);
   const inter=A.filter(t=>SB.has(t)).length;if(inter===Math.min(SA.size,SB.size))return 50+inter*5-Math.abs(SA.size-SB.size);return 0}
 function best(name,list,get){let top=null,sc=49;for(const x of list){const v=sim(name,get(x));if(v>sc){sc=v;top=x}}return top}
 const LEAGUE_LOGO={superlig:"super-lig.png","1lig":"1st-lig.png","2lig":"2nd-lig.png","3lig":""};
@@ -624,17 +624,17 @@ function applyApi(d){
     const m=best(name,inline.filter(x=>!used.has(x.id)),x=>x.name),info=teamInfo[tid]||{};
     let id,o;
     if(m){used.add(m.id);const r=C[m.id];id=m.id;o={id,name:r[0],short:r[1],city:r[2]||info.city||"",stadium:r[3]||info.stadium||"",c1:r[4]||"#1d5a3a",c2:r[5]||"#f3f6f1",logo:r[6]||""}}
-    else{id="t"+tid;o={id,name,short:toks(name)[0]?toks(name)[0].slice(0,3).toLocaleUpperCase("tr"):name.slice(0,3),city:info.city||"",stadium:info.stadium||"",c1:"#1d5a3a",c2:"#f3f6f1",logo:""}}
+    else{id="t"+tid;o={id,name,short:(name.split(" ")[0]||name).slice(0,3).toLocaleUpperCase("tr"),city:info.city||"",stadium:info.stadium||"",c1:"#1d5a3a",c2:"#f3f6f1",logo:""}}
     if(!LOGOS[id]&&!o.logo){const f=best(name,files,f=>f.replace(/\.[a-z]+$/i,""));o.logo=f||info.logo||""}
     o.apiLogo=info.logo||"";
     o.founded=info.founded||null;o.league=lid;CLUBS[id]=o;byApi[tid]=id;return id};
   const L2=d.tables.map(t=>{
     const key=t.id.split("-")[0],rows=t.table.map(r=>{const id=mk(r.teamId,r.team,t.id);return [id,r.p,r.w,r.d,r.l,r.gf,r.ga,r.w*3+r.d-r.pts]});
-    return {id:t.id,name:t.name,short:t.short,logo:LEAGUE_LOGO[key]||t.leagueLogo||"",week:t.week,src:"API-Football",rowZones:t.table.map(r=>r.zone||""),zones:{up:0,po:[0,0],down:0},table:rows,
+    return {id:t.id,name:t.name,short:t.short,logo:LEAGUE_LOGO[key]||t.leagueLogo||"",week:t.week,src:t.src||"API-Football",rowZones:t.table.map(r=>r.zone||""),zones:{up:0,po:[0,0],down:0},table:rows,
       results:t.results.map(f=>[mk(f.homeId,f.home,t.id),f.hs,f.as,mk(f.awayId,f.away,t.id)])}});
   LEAGUES.length=0;LEAGUES.push(...L2.sort((a,b)=>(a.id==="superlig"?-1:0)-(b.id==="superlig"?-1:0)));
   const [dt,tm]=String(d.updated||"").split(" "),[y,mo,da]=(dt||"").split("-");
-  UPDATED=y?`${+da} ${["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][mo-1]} ${y} ${tm||""}`.trim():UPDATED;SOURCE="API";
+  SOURCE=d.source==="TFF"?"TFF":"API";UPDATED=y?`${+da} ${["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][mo-1]} ${y} ${tm||""}`.trim():UPDATED;
   if(!league(boardLeague))boardLeague=LEAGUES[0].id;if(!league(standLeague))standLeague=LEAGUES[0].id;
   applyLogos(d);return true}
 fetch("veri/data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(applyApi(d))route(true)}).catch(()=>{});
