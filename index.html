@@ -611,8 +611,12 @@ function sim(a,b){if(slug(a)===slug(b))return 100;const A=toks(a),B=toks(b);if(!
   const inter=A.filter(t=>SB.has(t)).length;if(inter===Math.min(SA.size,SB.size))return 50+inter*5-Math.abs(SA.size-SB.size);return 0}
 function best(name,list,get){let top=null,sc=49;for(const x of list){const v=sim(name,get(x));if(v>sc){sc=v;top=x}}return top}
 const LEAGUE_LOGO={superlig:"super-lig.png","1lig":"1st-lig.png","2lig":"2nd-lig.png","3lig":""};
+function applyLogos(d){
+  const list=Object.values((d&&d.teamLogos)||{}).filter(x=>x&&x.logo&&x.name);if(!list.length)return false;
+  for(const c of Object.values(CLUBS)){const m=best(c.name,list,x=>x.name);if(!m)continue;c.apiLogo=m.logo;if(!LOGOS[c.id]&&!c.logo)c.logo=m.logo}
+  return true}
 function applyApi(d){
-  if(!d||!Array.isArray(d.tables)||!d.tables.length)return false;
+  if(!d||!Array.isArray(d.tables)||!d.tables.length)return applyLogos(d);
   const inline=Object.keys(C).map(id=>({id,name:C[id][0]})),used=new Set(),byApi={},teamInfo=d.teams||{},files=d.logos||[];
   for(const k in CLUBS)delete CLUBS[k];
   const mk=(tid,name,lid)=>{
@@ -632,7 +636,7 @@ function applyApi(d){
   const [dt,tm]=String(d.updated||"").split(" "),[y,mo,da]=(dt||"").split("-");
   UPDATED=y?`${+da} ${["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][mo-1]} ${y} ${tm||""}`.trim():UPDATED;SOURCE="API";
   if(!league(boardLeague))boardLeague=LEAGUES[0].id;if(!league(standLeague))standLeague=LEAGUES[0].id;
-  return true}
+  applyLogos(d);return true}
 fetch("veri/data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(applyApi(d))route(true)}).catch(()=>{});
 
 }

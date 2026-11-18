@@ -98,11 +98,26 @@ def main():
             print(f"Bulundu: {l['league']['name']} -> API id {l['league']['id']}, sezon {season['year']}, "
                   f"puan durumu: {season.get('coverage', {}).get('standings')}")
 
+    extra_ids = []
+    if found:
+        top = max(f[4] for f in found)
+        stale = [f for f in found if f[4] < top]
+        for f in stale:
+            print(f"Atlandı (eski sezon {f[4]}): API id {f[3]}")
+        found = [f for f in found if f[4] >= top]
+        extra_ids = [f[3] for f in stale]
+
     today = datetime.now(TZ).date()
     frm = (today - timedelta(days=7)).isoformat()
     tables, teams = [], {}
+    blocked = False
     for key, name, short, lid, season, suffix, llogo in found:
-        st = get("standings", league=lid, season=season)
+        try:
+            st = get("standings", league=lid, season=season)
+        except RuntimeError as e:
+            print(f"  {name}: puan durumu alınamadı -> {e}")
+            blocked = blocked or "plan" in str(e).lower()
+            continue
         groups = st[0]["league"]["standings"] if st else []
         fx = get("fixtures", league=lid, season=season, **{"from": frm, "to": today.isoformat()}, timezone="Europe/Istanbul")
         for t in get("teams", league=lid, season=season):
@@ -150,10 +165,44 @@ def main():
 
     logos = sorted(f for f in os.listdir(LOGO_DIR) if f.lower().endswith((".png", ".jpg", ".jpeg", ".svg", ".webp"))) \
         if os.path.isdir(LOGO_DIR) else []
+    # Kulüp logoları: ayda bir, paketin erişebildiği geçmiş sezonlardan toplanır
+    old = {}
+    if os.path.exists(OUT):
+        try:
+            with open(OUT, encoding="utf-8") as f:
+                old = json.load(f)
+        except Exception:
+            old = {}
+    team_logos = old.get("teamLogos") or {}
+    fresh = old.get("teamLogosAt", "") >= (today - timedelta(days=30)).isoformat()
+    if not (team_logos and fresh):
+        team_logos = {}
+        all_ids = sorted({f[3] for f in found} | set(extra_ids))
+        for lid in all_ids:
+            for yr in (2024, 2023, 2022):
+                try:
+                    for t in get("teams", league=lid, season=yr):
+                        tm = t.get("team", {})
+                        if tm.get("id") and tm.get("logo"):
+                            team_logos.setdefault(str(tm["id"]), {"name": tm.get("name"), "logo": tm["logo"]})
+                except RuntimeError as e:
+                    print(f"  Logo listesi (lig {lid}, {yr}) alınamadı: {e}")
+        print(f"Logo listesi: {len(team_logos)} kulüp")
+        logos_at = today.isoformat()
+    else:
+        logos_at = old.get("teamLogosAt")
+    for v in teams.values():  # bu sezonun logoları da listeye
+        if v.get("logo") and v.get("name"):
+            team_logos.setdefault("n:" + v["name"], {"name": v["name"], "logo": v["logo"]})
+
     data = {"updated": datetime.now(TZ).strftime("%Y-%m-%d %H:%M"), "source": "API-Football",
-            "tables": tables, "teams": {str(k): v for k, v in teams.items() if k}, "logos": logos}
+            "tables": tables, "teams": {str(k): v for k, v in teams.items() if k}, "logos": logos,
+            "teamLogos": team_logos, "teamLogosAt": logos_at}
+    if not tables and not team_logos:
+        sys.exit("Hiç veri alınamadı; mevcut veri/data.json değiştirilmedi.")
     if not tables:
-        sys.exit("Hiç tablo alınamadı; mevcut veri/data.json değiştirilmedi.")
+        print("UYARI: Bu sezonun puan durumu alınamadı" + (" (paket bu sezona erişemiyor)" if blocked else "")
+              + "; sitede kendi içindeki tablolar gösterilecek, logolar güncellendi.")
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
