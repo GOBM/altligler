@@ -607,7 +607,7 @@ addEventListener("hashchange",()=>route());route();
 const slug=s=>String(s||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,ch=>({ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u",â:"a",î:"i",û:"u"}[ch])).normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const STOP=new Set(["fk","sk","fsk","as","a","s","futbol","kulubu","spor","jk","sporu"]);
 const toks=s=>slug(s).split("-").filter(t=>t&&!STOP.has(t));
-function sim(a,b){if(slug(a)===slug(b))return 100;const ca=slug(a).replace(/-/g,""),cb=slug(b).replace(/-/g,"");if(ca===cb)return 95;if(Math.min(ca.length,cb.length)>=6&&(ca.endsWith(cb)||cb.endsWith(ca)))return 80;const A=toks(a),B=toks(b);if(!A.length||!B.length)return 0;const SA=new Set(A),SB=new Set(B);
+function sim(a,b){if(slug(a)===slug(b))return 100;const ca=slug(a).replace(/-/g,""),cb=slug(b).replace(/-/g,"");if(ca===cb)return 95;const na=ca.replace(/spor|kulubu|fk|sk/g,""),nb=cb.replace(/spor|kulubu|fk|sk/g,"");if(na.length>=3&&na===nb)return 88;if(Math.min(ca.length,cb.length)>=6&&(ca.endsWith(cb)||cb.endsWith(ca)))return 80;const A=toks(a),B=toks(b);if(!A.length||!B.length)return 0;const SA=new Set(A),SB=new Set(B);
   const inter=A.filter(t=>SB.has(t)).length;if(inter===Math.min(SA.size,SB.size))return 50+inter*5-Math.abs(SA.size-SB.size);return 0}
 function best(name,list,get){let top=null,sc=49;for(const x of list){const v=sim(name,get(x));if(v>sc){sc=v;top=x}}return top}
 const LEAGUE_LOGO={superlig:"super-lig.png","1lig":"1st-lig.png","2lig":"2nd-lig.png","3lig":""};

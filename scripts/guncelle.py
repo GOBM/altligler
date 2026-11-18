@@ -38,12 +38,14 @@ FX_RE = re.compile(
 SCORE_RE = re.compile(r"^\s*(\d+)\s*-\s*(\d+)\s*$")
 
 LOWER = str.maketrans({"I": "ı", "İ": "i"})
-DROP = re.compile(r"\b(A\.?\s?Ş\.?|SPOR KULÜBÜ|FUTBOL KULÜBÜ|FUTBOL SPOR KULÜBÜ|SPOR FAALİYETLERİ|FUTBOL YATIRIMLARI|KULÜBÜ|DERNEĞİ)\b\.?", re.I)
+DROP = re.compile(r"\b(A\.?\s?Ş\.?|FUTBOL KULÜBÜ|FUTBOL SPOR KULÜBÜ|SPOR FAALİYETLERİ|FUTBOL YATIRIMLARI|KULÜBÜ|DERNEĞİ)\b\.?", re.I)
 
 
 def tr_title(s):
     s = re.sub(r"^\s*\d+\.\s*", "", html.unescape(s)).strip()          # baştaki "1." sırasını at
+    s = re.sub(r"\bSPOR KULÜBÜ\b", "SPOR", s, flags=re.I)
     s = re.sub(r"\s+", " ", DROP.sub("", s)).strip(" .-")
+    s = re.sub(r"(\w) SPOR$", r"\1SPOR", s)  # "MUŞ SPOR" -> "MUŞSPOR"
     keep = {"FK", "SK", "FSK", "MKE", "SMS", "KCT", "GOG", "BB", "GFK", "TFF"}
     words = []
     for w in s.split(" "):
