@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AltLigler.com</title>
+<meta name="description" content="Türkiye'nin alt ligleri: TFF 1. Lig, 2. Lig ve 3. Lig puan durumları, maç sonuçları, haberler ve kulüp bilgileri.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: tribün sesi, yerel gurur; sade ama heyecanlı
+   IDEA: hafta sonu çim saha ve tebeşir çizgileri, stat skorbordu
+   PICTURE: biçilmiş çim şeritleri, orta saha çizgisi üstünde skor tahtası
+   COLOUR and TYPE: çim yeşili zemin, tebeşir beyazı, projektör sarısı; Barlow Condensed başlıklar + Barlow metin
+   LAYOUT: tam genişlik saha bandı, altında haber + puan durumu iki sütun, kulüp şeridi, footer */
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f6f2,#0f1a14);--card:light-dark(#ffffff,#16241c);--ink:light-dark(#17201b,#e9efe9);
+--mute:light-dark(#5b675f,#9fb0a5);--line:light-dark(#dfe5dd,#26372d);
+--pitch:#1d5a3a;--pitch2:#174a30;--chalk:#f3f6f1;--lamp:#f5c518;--up:#2f9e5b;--po:#e0a10f;--down:#c8362d}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.cond{font-family:"Barlow Condensed",Barlow,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--lamp);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+.band{padding:clamp(28px,4vw,56px) 0}
+pre,.scroll{overflow-x:auto}
+
+/* header */
+header{background:var(--pitch2);color:var(--chalk);position:sticky;top:0;z-index:20;border-bottom:3px solid var(--lamp)}
+.hd{display:flex;align-items:center;gap:20px;min-height:64px;flex-wrap:wrap}
+.logo{display:flex;align-items:baseline;gap:2px;text-decoration:none;font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:30px;letter-spacing:-.5px}
+.logo b{color:var(--lamp)}.logo small{font-size:16px;font-weight:500;opacity:.7}
+nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+nav a{text-decoration:none;padding:10px 14px;border-radius:6px;font-weight:600;min-height:44px;display:flex;align-items:center}
+nav a:hover{background:rgba(255,255,255,.08)}
+nav a[aria-current=page]{background:var(--lamp);color:#1b1a10}
+
+/* pitch hero */
+.pitch{color:var(--chalk);background-color:var(--pitch);
+background-image:
+ radial-gradient(circle at 50% 50%,transparent 129px,rgba(255,255,255,.16) 130px,rgba(255,255,255,.16) 132px,transparent 133px),
+ linear-gradient(90deg,transparent calc(50% - 1px),rgba(255,255,255,.16) calc(50% - 1px),rgba(255,255,255,.16) calc(50% + 1px),transparent calc(50% + 1px)),
+ repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 90px,transparent 90px 180px)}
+.pitch h1{font-size:clamp(36px,6vw,64px);font-weight:800;max-width:14ch}
+.pitch p.lead{max-width:56ch;opacity:.85;margin:12px 0 24px;font-size:17px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{font:600 15px Barlow,sans-serif;border:1px solid rgba(255,255,255,.35);background:transparent;color:inherit;padding:10px 16px;border-radius:999px;cursor:pointer;min-height:44px}
+.tab[aria-selected=true]{background:var(--chalk);color:var(--pitch2);border-color:var(--chalk)}
+.board{background:rgba(8,22,14,.72);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:6px 0;box-shadow:0 20px 40px -20px rgba(0,0,0,.5)}
+.fx{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.fx:last-child{border-bottom:0}
+.fx .t{display:flex;align-items:center;gap:10px;font:700 clamp(17px,2.2vw,22px) "Barlow Condensed",sans-serif;text-decoration:none}
+.fx .t:hover span{text-decoration:underline}
+.fx .t.r{justify-content:flex-end;text-align:right}
+.sc{text-align:center;font:800 28px/1 "Barlow Condensed",sans-serif;color:var(--lamp);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sc small{display:block;font:500 12px Barlow,sans-serif;color:var(--chalk);opacity:.7;margin-top:4px}
+.sc.up{font-size:20px;color:var(--chalk)}
+.note{font-size:13px;opacity:.75;margin-top:12px}
+
+/* crest */
+.crest{flex:none;width:30px;height:34px;display:grid;place-items:center;clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);font:800 10px/1 "Barlow Condensed",sans-serif;letter-spacing:-.3px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.lglogo{width:22px;height:22px;object-fit:contain;flex:none;margin-right:8px;vertical-align:middle}
+.lglogo.big{width:34px;height:34px;margin-right:10px}
+.tab,.sel button,.lgh{display:inline-flex;align-items:center}
+.crest.logo{clip-path:none;object-fit:contain;background:none}
+.crest.lg{width:84px;height:96px;font-size:26px}
+
+/* layout */
+.cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sh h2{font-size:32px;font-weight:800}
+.sh a{font-weight:600;color:var(--mute)}
+.lead-story{display:grid;grid-template-columns:minmax(0,1fr);background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none}
+.ph{aspect-ratio:16/8;position:relative;overflow:hidden}
+.ph svg{position:absolute;inset:0;width:100%;height:100%}
+.lead-story .tx{padding:18px 20px 20px}
+.lead-story h3{font-size:clamp(26px,3vw,34px);font-weight:800;margin:6px 0 8px}
+.kicker{font-weight:600;font-size:14px;color:var(--up)}
+.meta{font-size:14px;color:var(--mute)}
+.nl{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:0}
+.nl li{border-top:1px solid var(--line)}
+.nl a{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;padding:14px 0;text-decoration:none;align-items:center}
+.nl .ph{aspect-ratio:4/3;border-radius:8px}
+.nl h3{font-size:21px;font-weight:700;margin:2px 0 4px}
+.nl a:hover h3,.lead-story:hover h3{text-decoration:underline}
+
+/* table */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 0 10px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:600 13px Barlow,sans-serif;color:var(--mute);text-align:right;padding:10px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th.l,td.l{text-align:left}
+td.pos{width:40px;text-align:center;font-weight:700;border-left:4px solid transparent}
+tr.z-up td.pos{border-left-color:var(--up)}tr.z-po td.pos{border-left-color:var(--po)}tr.z-down td.pos{border-left-color:var(--down)}
+td.tm a{display:flex;align-items:center;gap:8px;font-weight:600;text-decoration:none}
+td.tm a:hover{text-decoration:underline}
+td.pts{font-weight:800;font-family:"Barlow Condensed",sans-serif;font-size:19px}
+.form{display:inline-flex;gap:3px}
+.form i{width:20px;height:20px;border-radius:4px;display:grid;place-items:center;font:700 11px Barlow,sans-serif;font-style:normal;color:#fff}
+.form .G{background:var(--up)}.form .B{background:#8a958d}.form .M{background:var(--down)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--mute);padding:12px 16px 0}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c)}
+.mini td,.mini th{padding:8px 10px}
+.sel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.sel button{font:600 15px Barlow,sans-serif;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;min-height:44px}
+.sel button[aria-pressed=true]{background:var(--pitch);color:var(--chalk);border-color:var(--pitch)}
+
+/* clubs */
+.clubs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.club{display:flex;gap:14px;align-items:center;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;min-height:72px}
+.club:hover{border-color:var(--pitch)}
+.club b{display:block;font:700 20px "Barlow Condensed",sans-serif}
+.club span{font-size:14px;color:var(--mute)}
+.strip{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+.strip .club{flex:none;width:220px}
+.search{width:100%;max-width:420px;font:16px Barlow,sans-serif;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px;margin-bottom:16px}
+.empty{padding:28px;text-align:center;color:var(--mute);background:var(--card);border:1px dashed var(--line);border-radius:12px}
+
+/* club page */
+.chero{color:var(--chalk);padding:clamp(28px,4vw,48px) 0}
+.chero .in{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.chero h1{font-size:clamp(36px,6vw,56px);font-weight:800}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:28px}
+.facts div{background:var(--card);padding:14px 16px}
+.facts dt{font-size:13px;color:var(--mute)}.facts dd{margin:2px 0 0;font:700 22px "Barlow Condensed",sans-serif}
+
+/* article */
+article{max-width:720px}
+article h1{font-size:clamp(32px,5vw,48px);font-weight:800;margin:8px 0 12px}
+article p{font-size:17px;margin:0 0 16px}
+article .ph{border-radius:14px;margin:20px 0}
+.back{display:inline-flex;align-items:center;min-height:44px;font-weight:600;color:var(--mute)}
+
+footer{background:var(--pitch2);color:var(--chalk);margin-top:40px;padding:36px 0;font-size:15px}
+footer .wrap{display:flex;gap:24px;justify-content:space-between;flex-wrap:wrap}
+footer p{margin:6px 0 0;opacity:.75;max-width:48ch}
+.demo{font-size:13px;color:var(--mute);margin-top:10px}
+
+@media(max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+ .hd{gap:4px;padding-block:6px}nav{margin-left:0;width:100%}nav a{padding:8px 10px;font-size:15px}
+ .fx{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);padding:10px 12px;gap:8px}
+ .fx .t{font-size:16px;gap:6px}.fx .crest{display:none}.sc{font-size:22px}
+ .nl a{grid-template-columns:72px minmax(0,1fr)}.nl h3{font-size:18px}
+ table{font-size:14px}.hide-s{display:none}
+}
+@media(prefers-reduced-motion:no-preference){.board .fx{animation:in .5s ease-out both}.board .fx:nth-child(2){animation-delay:.06s}.board .fx:nth-child(3){animation-delay:.12s}.board .fx:nth-child(4){animation-delay:.18s}.board .fx:nth-child(5){animation-delay:.24s}}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+</style>
+</head>
+<body>
+<header><div class="wrap hd">
+  <a class="logo" href="#ana" aria-label="AltLigler ana sayfa">Alt<b>Ligler</b><small>.com</small></a>
+  <nav id="nav">
+    <a href="#ana">Ana sayfa</a><a href="#puan">Puan durumu</a><a href="#haberler">Haberler</a><a href="#kulupler">Kulüpler</a>
+  </nav>
+</div></header>
+
+<main id="app"></main>
+
+<footer><div class="wrap">
+  <div><div class="logo">Alt<b>Ligler</b><small>.com</small></div>
+  <p>Süper Lig ile TFF 1. Lig, 2. Lig ve 3. Lig'in sonuçları, puan durumları ve kulüp hikâyeleri tek yerde.</p></div>
+  <div><b>Ligler</b><p>Süper Lig, TFF 1. Lig, 2. Lig Beyaz ve Kırmızı Grup, 3. Lig 1., 2. ve 3. Grup</p></div>
+</div></footer>
+
+<script>
+{
+/* =====================================================================
+   VERİLER — siteyi güncellemek için yalnızca bu bölümü düzenleyin.
+   Kaynak: tff.org puan cetvelleri ve fikstürleri (18 Kasım 2026 itibarıyla).
+   ===================================================================== */
+let UPDATED="18 Kasım 2026", SOURCE="TFF";
+const LOGO_DIR="logolar/"; // index.html ile aynı yerdeki logo klasörü
+
+// Kulüpler: id: [görünen ad, kısa ad, şehir, stadyum, renk1, renk2, logo]
+// Renk bilinmiyorsa null bırakın; logo için izinli bir görsel yolu yazın (ör. "logolar/bursaspor.png").
+const C={
+ bursaspor:["Bursaspor","BUR","Bursa","Bursa Büyükşehir Belediye Stadyumu","#0f8a3c","#ffffff"],
+ kayserispor:["Kayserispor","KAY","Kayseri","Kadir Has Stadyumu","#f2c500","#d71920"],
+ igdir:["Iğdır FK","IĞD","Iğdır","Iğdır Şehir Stadyumu"],
+ mardin:["Mardin 1969 Spor","MAR","Mardin","21 Kasım Stadyumu"],
+ batman:["Batman Petrolspor","BAT","Batman","Batman Stadyumu"],
+ kecioren:["Keçiörengücü","KEÇ","Ankara","Ankara Aktepe Stadyumu"],
+ bodrum:["Bodrum FK","BOD","Muğla","Bodrum İlçe Stadyumu","#0f8a3c","#ffffff"],
+ antalyaspor:["Antalyaspor","ANT","Antalya","Antalya Stadyumu","#d71920","#ffffff"],
+ karagumruk:["Fatih Karagümrük","FKG","İstanbul","Atatürk Olimpiyat Stadyumu","#d71920","#111111"],
+ erokspor:["Esenler Erokspor","ERO","İstanbul","Esenler Stadyumu"],
+ muglaspor:["Muğlaspor","MUĞ","Muğla","Muğla Atatürk Stadyumu"],
+ umraniye:["Ümraniyespor","ÜMR","İstanbul","Ümraniye Belediyesi Şehir Stadyumu","#d71920","#ffffff"],
+ sariyer:["Sarıyer","SAR","İstanbul","Yusuf Ziya Öniş Stadyumu","#1d2f6f","#ffffff"],
+ vanspor:["Vanspor","VAN","Van","Van Atatürk Stadyumu"],
+ bandirma:["Bandırmaspor","BAN","Balıkesir","17 Eylül Stadyumu"],
+ pendik:["Pendikspor","PEN","İstanbul","Pendik Stadyumu","#d71920","#ffffff"],
+ manisa:["Manisa FK","MAN","Manisa","Manisa 19 Mayıs Stadyumu"],
+ sivasspor:["Sivasspor","SİV","Sivas","Yeni Sivas 4 Eylül Stadyumu","#d71920","#ffffff"],
+ istanbulspor:["İstanbulspor","İST","İstanbul","Esenyurt Necmi Kadıoğlu Stadyumu","#f2c500","#111111"],
+ boluspor:["Boluspor","BOL","Bolu","Bolu Atatürk Stadyumu","#d71920","#ffffff"],
+ // 2. Lig Beyaz Grup
+ elazig:["Elazığspor","ELZ","Elazığ",null,"#7a1f2b","#ffffff"],
+ mus:["Muşspor","MUŞ","Muş"],
+ gebze:["Güzide Gebzespor","GEB","Kocaeli"],
+ aliaga:["Aliağa FK","ALİ","İzmir"],
+ urfa:["Şanlıurfaspor","URF","Şanlıurfa",null,"#119447","#f2c500"],
+ corlu:["Çorluspor 1947","ÇOR","Tekirdağ"],
+ inegolkafkas:["İnegöl Kafkasspor","İKS","Bursa"],
+ erbaa:["Erbaaspor","ERB","Tokat"],
+ sebat:["Sebatspor","SEB","Trabzon"],
+ isparta:["Isparta 32 Spor","ISP","Isparta"],
+ menemen:["Menemen FK","MEN","İzmir"],
+ ankaraspor:["Ankaraspor","AKS","Ankara"],
+ aksaray:["68 Aksaray Belediyespor","AKR","Aksaray"],
+ somaspor:["Somaspor","SOM","Manisa"],
+ kastamonu:["Kastamonuspor","KAS","Kastamonu"],
+ arnavutkoy:["Arnavutköy Belediyespor","ARN","İstanbul"],
+ hatayspor:["Hatayspor","HAT","Hatay",null,"#7a1f2b","#ffffff"],
+ adanademir:["Adana Demirspor","ADS","Adana",null,"#1b5fae","#13265c"],
+ // 2. Lig Kırmızı Grup
+ orduspor52:["52 Orduspor FK","ORD","Ordu"],
+ adana01:["Adana 01 FK","A01","Adana"],
+ erzincan:["Erzincanspor","ERZ","Erzincan"],
+ ankarademir:["Ankara Demirspor","ADM","Ankara"],
+ istiklal:["Kahramanmaraş İstiklalspor","KİS","Kahramanmaraş"],
+ sakaryaspor:["Sakaryaspor","SAK","Sakarya",null,"#0f7a3d","#111111"],
+ kutahya:["Kütahyaspor","KÜT","Kütahya"],
+ beyoglu:["Beyoğlu Yeni Çarşı","BYÇ","İstanbul"],
+ trabzon1461:["1461 Trabzon FK","TRB","Trabzon"],
+ karacabey:["Karacabey Belediyespor","KRC","Bursa"],
+ bingol:["12 Bingölspor","BİN","Bingöl"],
+ kirklareli:["Kırklarelispor","KIR","Kırklareli"],
+ fethiye:["Fethiyespor","FET","Muğla"],
+ ankaragucu:["MKE Ankaragücü","AGÜ","Ankara",null,"#f2c500","#13265c"],
+ serik:["Serikspor","SER","Antalya"],
+ inegolspor:["İnegölspor","İNE","Bursa"],
+ iskenderun:["İskenderunspor","İSK","Hatay"],
+ // 3. Lig 1. Grup
+ fatsa:["Fatsa Belediyespor","FAT","Ordu"],
+ pazarspor:["Pazarspor","PAZ","Rize"],
+ kucukcekmece:["Küçükçekmece Sinop Spor","KÇS","İstanbul"],
+ karabuk:["Karabük İdmanyurdu","KAR","Karabük"],
+ kartal:["Kartalspor","KRT","İstanbul"],
+ orduspor67:["Orduspor 1967","O67","Ordu"],
+ duzce:["Düzcespor","DÜZ","Düzce"],
+ silivri:["Silivrispor","SİL","İstanbul"],
+ amasya:["Amasyaspor FK","AMS","Amasya"],
+ yalova:["Yalova FK 77","YAL","Yalova"],
+ inkilap:["İnkılap FK","İNK",""],
+ eregli:["Kdz. Ereğli 1980","ERE","Zonguldak"],
+ zonguldakspor:["Zonguldakspor","ZON","Zonguldak"],
+ galata:["Galataspor","GAL","İstanbul"],
+ beykoz:["Beykoz Anadolu","BEY","İstanbul"],
+ golcuk:["Gölcükspor","GÖL","Kocaeli"],
+ tokat:["Tokat Belediyespor","TOK","Tokat"],
+ buyukcekmece:["Büyükçekmece Gücü","BÇG","İstanbul"],
+ // 3. Lig 2. Grup
+ etimesgut:["Etimesgut Spor","ETİ","Ankara"],
+ eskisehirspor:["Eskişehirspor","ESK","Eskişehir",null,"#d71920","#111111"],
+ gemlik:["Gemlik Sümerbeyspor","GEM","Bursa"],
+ balikesirspor:["Balıkesirspor","BAL","Balıkesir"],
+ karsiyaka:["Karşıyaka","KSK","İzmir",null,"#16a34a","#d71920"],
+ bursayildirim:["Bursa Yıldırımspor","BYS","Bursa"],
+ eskisehiranadolu:["Eskişehir Anadolu Spor","EAS","Eskişehir"],
+ ayvalik:["Ayvalıkgücü Belediyespor","AYV","Balıkesir"],
+ bigaspor:["Bigaspor","BİG","Çanakkale"],
+ gaziemir:["Gaziemir GOG Spor","GZM","İzmir"],
+ kepez:["Kepezspor","KEP","Antalya"],
+ alanya1221:["Alanya 1221 FSK","A21","Antalya"],
+ usak:["Uşakspor","UŞK","Uşak"],
+ altay:["Altay","ALT","İzmir",null,"#111111","#ffffff"],
+ soke:["Söke 1970 Spor","SÖK","Aydın"],
+ bucaspor:["Bucaspor 1928","BUC","İzmir"],
+ denizliiy:["Denizli İdmanyurdu 1959","DİY","Denizli"],
+ aksehir:["1922 Akşehir Spor","AKŞ","Konya"],
+ // 3. Lig 3. Grup
+ malatyayesilyurt:["Malatya Yeşilyurtspor","MYS","Malatya"],
+ erciyes38:["Erciyes 38 FSK","E38","Kayseri"],
+ karakopru:["Karaköprü Belediyespor","KKP","Şanlıurfa"],
+ mazidagi:["Mazıdağı Fosfatspor","MAZ","Mardin"],
+ nigde:["Niğde Belediyespor","NİĞ","Niğde"],
+ kirsehir:["Kırşehir FSK","KRŞ","Kırşehir"],
+ bitlis:["Bitlis 1916 FSK","BİT","Bitlis"],
+ mersiniy:["Yeni Mersin İdmanyurdu","MİY","Mersin"],
+ kirikkale:["Kırıkkale FK","KKL","Kırıkkale"],
+ osmaniye:["Osmaniyespor FK","OSM","Osmaniye"],
+ adaletgucu:["Adana Adaletgücü","AAG","Adana"],
+ agri:["Ağrı 1970 Spor","AĞR","Ağrı"],
+ diyarbekir:["Diyarbekirspor","DBK","Diyarbakır"],
+ yozgat:["Yozgat Bozokspor","YOZ","Yozgat"],
+ silifke:["1964 Silifkespor","SLF","Mersin"],
+ karaman:["Karaman FK","KRM","Karaman"],
+ adanaspor:["Adanaspor","ADN","Adana",null,"#f47a20","#ffffff"],
+ yenimalatya:["Yeni Malatyaspor","YMS","Malatya"]
+};
+
+// LOGOLAR — logolar klasöründeki dosya adları. Yeni logo eklerken dosyayı klasöre koyup adını buraya yazın.
+// Boş bırakılan kulüpte renkli kalkan gösterilir. Tam bir internet adresi de yazabilirsiniz.
+const LOGOS={
+  bursaspor:"bursaspor.png", // Bursaspor
+  kayserispor:"kayserispor.png", // Kayserispor
+  igdir:"igdir.png", // Iğdır FK
+  mardin:"mardin-1969-spor.png", // Mardin 1969 Spor
+  batman:"batman-petrolspor.png", // Batman Petrolspor
+  kecioren:"keciorengucu.png", // Keçiörengücü
+  bodrum:"bodrum-fk.png", // Bodrum FK
+  antalyaspor:"antalyaspor.png", // Antalyaspor
+  karagumruk:"fatih-karagumruk.png", // Fatih Karagümrük
+  erokspor:"esenler-erokspor.png", // Esenler Erokspor
+  muglaspor:"muglaspor.png", // Muğlaspor
+  umraniye:"umraniyespor.png", // Ümraniyespor
+  sariyer:"sariyer.png", // Sarıyer
+  vanspor:"van-spor.png", // Vanspor
+  bandirma:"bandirmaspor.png", // Bandırmaspor
+  pendik:"pendikspor.png", // Pendikspor
+  manisa:"manisa.png", // Manisa FK
+  sivasspor:"sivasspor.png", // Sivasspor
+  istanbulspor:"istanbulspor.png", // İstanbulspor
+  boluspor:"boluspor.png", // Boluspor
+  elazig:"elazig.png", // Elazığspor
+  mus:"musspor.png", // Muşspor
+  gebze:"guzide-gebzespor.png", // Güzide Gebzespor
+  aliaga:"aliaga-fk.png", // Aliağa FK
+  urfa:"sanliurfaspor.png", // Şanlıurfaspor
+  corlu:"corluspor-1947.png", // Çorluspor 1947
+  inegolkafkas:"inegol-kafkas.png", // İnegöl Kafkasspor
+  erbaa:"erbaaspor.png", // Erbaaspor
+  sebat:"sebat-genclik-spor.png", // Sebatspor
+  isparta:"isparta-32-spor.png", // Isparta 32 Spor
+  menemen:"menemen-fk.png", // Menemen FK
+  ankaraspor:"ankaraspor.png", // Ankaraspor
+  aksaray:"68-aksaray-belediyespor.png", // 68 Aksaray Belediyespor
+  somaspor:"somaspor.png", // Somaspor
+  kastamonu:"kastamonuspor.png", // Kastamonuspor
+  arnavutkoy:"arnavutkoy-belediyespor.png", // Arnavutköy Belediyespor
+  hatayspor:"hatayspor.png", // Hatayspor
+  adanademir:"adana-demirspor.png", // Adana Demirspor
+  orduspor52:"52-orduspor.png", // 52 Orduspor FK
+  adana01:"adana-01.png", // Adana 01 FK
+  erzincan:"erzincanspor.png", // Erzincanspor
+  ankarademir:"ankara-demirspor.png", // Ankara Demirspor
+  istiklal:"kahramanmaras-istiklalspor.png", // Kahramanmaraş İstiklalspor
+  sakaryaspor:"sakaryaspor.png", // Sakaryaspor
+  kutahya:"kutahyaspor.png", // Kütahyaspor
+  beyoglu:"beyoglu-yeni-carsi.png", // Beyoğlu Yeni Çarşı
+  trabzon1461:"1461-trabzon.png", // 1461 Trabzon FK
+  karacabey:"karacabey-belediye-spor.png", // Karacabey Belediyespor
+  bingol:"12-bingolspor.png", // 12 Bingölspor
+  kirklareli:"kirklarelispor.png", // Kırklarelispor
+  fethiye:"fethiyespor.png", // Fethiyespor
+  ankaragucu:"ankaragucu.png", // MKE Ankaragücü
+  serik:"serik-belediyespor.png", // Serikspor
+  inegolspor:"inegolspor.png", // İnegölspor
+  iskenderun:"iskenderunspor.png", // İskenderunspor
+  fatsa:"", // Fatsa Belediyespor
+  pazarspor:"", // Pazarspor
+  kucukcekmece:"", // Küçükçekmece Sinop Spor
+  karabuk:"", // Karabük İdmanyurdu
+  kartal:"", // Kartalspor
+  orduspor67:"orduspor.png", // Orduspor 1967
+  duzce:"", // Düzcespor
+  silivri:"", // Silivrispor
+  amasya:"", // Amasyaspor FK
+  yalova:"", // Yalova FK 77
+  inkilap:"", // İnkılap FK
+  eregli:"", // Kdz. Ereğli 1980
+  zonguldakspor:"", // Zonguldakspor
+  galata:"", // Galataspor
+  beykoz:"", // Beykoz Anadolu
+  golcuk:"", // Gölcükspor
+  tokat:"", // Tokat Belediyespor
+  buyukcekmece:"", // Büyükçekmece Gücü
+  etimesgut:"", // Etimesgut Spor
+  eskisehirspor:"eskisehirspor.png", // Eskişehirspor
+  gemlik:"", // Gemlik Sümerbeyspor
+  balikesirspor:"", // Balıkesirspor
+  karsiyaka:"karsiyaka-sk.png", // Karşıyaka
+  bursayildirim:"", // Bursa Yıldırımspor
+  eskisehiranadolu:"", // Eskişehir Anadolu Spor
+  ayvalik:"", // Ayvalıkgücü Belediyespor
+  bigaspor:"", // Bigaspor
+  gaziemir:"", // Gaziemir GOG Spor
+  kepez:"", // Kepezspor
+  alanya1221:"", // Alanya 1221 FSK
+  usak:"", // Uşakspor
+  altay:"altay-sk.png", // Altay
+  soke:"", // Söke 1970 Spor
+  bucaspor:"", // Bucaspor 1928
+  denizliiy:"", // Denizli İdmanyurdu 1959
+  aksehir:"", // 1922 Akşehir Spor
+  malatyayesilyurt:"", // Malatya Yeşilyurtspor
+  erciyes38:"", // Erciyes 38 FSK
+  karakopru:"", // Karaköprü Belediyespor
+  mazidagi:"", // Mazıdağı Fosfatspor
+  nigde:"", // Niğde Belediyespor
+  kirsehir:"", // Kırşehir FSK
+  bitlis:"", // Bitlis 1916 FSK
+  mersiniy:"", // Yeni Mersin İdmanyurdu
+  kirikkale:"", // Kırıkkale FK
+  osmaniye:"", // Osmaniyespor FK
+  adaletgucu:"", // Adana Adaletgücü
+  agri:"", // Ağrı 1970 Spor
+  diyarbekir:"", // Diyarbekirspor
+  yozgat:"", // Yozgat Bozokspor
+  silifke:"", // 1964 Silifkespor
+  karaman:"", // Karaman FK
+  adanaspor:"adanaspor.png", // Adanaspor
+  yenimalatya:"", // Yeni Malatyaspor
+};
+
+// Ligler. Puan tablosu TFF sıralamasıyla aynı sırada: [kulüp, O, G, B, M, A, Y, ceza puanı]
+// zones: up = doğrudan yükselen sayısı, po = play-off aralığı, down = küme düşen sayısı (bilinmiyorsa 0)
+const LEAGUES=[
+ {id:"1lig",name:"Trendyol 1. Lig",short:"1. Lig",logo:"1st-lig.png",week:14,zones:{up:2,po:[3,7],down:4},src:"https://www.tff.org/default.aspx?pageID=142",
+  table:[["bursaspor",14,10,2,2,30,12],["kayserispor",14,9,3,2,33,11],["igdir",14,8,4,2,19,11],["mardin",14,7,4,3,19,13],["batman",14,7,3,4,27,24],["kecioren",14,6,5,3,26,18],["bodrum",14,5,6,3,18,13],["antalyaspor",14,6,2,6,20,21],["karagumruk",14,5,4,5,20,16],["erokspor",14,4,6,4,20,18],["muglaspor",14,4,6,4,18,25],["umraniye",13,4,5,4,16,12],["sariyer",14,4,5,5,15,19],["vanspor",14,5,3,6,17,23,2],["bandirma",14,3,5,6,17,17],["pendik",14,3,5,6,15,25],["manisa",14,3,4,7,21,24],["sivasspor",14,2,7,5,17,23],["istanbulspor",14,2,2,10,12,33],["boluspor",13,1,1,11,6,28]],
+  results:[["antalyaspor",1,1,"bursaspor"],["sariyer",1,1,"igdir"],["kecioren",1,0,"manisa"],["vanspor",3,1,"sivasspor"],["muglaspor",0,5,"erokspor"],["pendik",0,2,"istanbulspor"],["bandirma",0,4,"karagumruk"],["umraniye",2,1,"kayserispor"],["boluspor",1,2,"bodrum"],["mardin",1,1,"batman"]]},
+ {id:"2lig-beyaz",name:"Nesine 2. Lig Beyaz Grup",short:"2. Lig Beyaz",logo:"2nd-lig.png",week:11,zones:{up:1,po:[2,5],down:3},src:"https://www.tff.org/default.aspx?pageID=976",
+  table:[["elazig",11,8,2,1,28,7],["mus",11,8,2,1,31,13],["gebze",11,7,3,1,21,13],["aliaga",11,7,2,2,20,15],["urfa",11,6,3,2,26,13],["corlu",11,6,3,2,19,10],["inegolkafkas",11,6,2,3,20,15],["erbaa",11,5,2,4,20,15],["sebat",11,4,3,4,25,16],["isparta",11,4,2,5,20,21],["menemen",11,4,2,5,12,15],["ankaraspor",11,4,1,6,15,19],["aksaray",11,3,3,5,20,17],["somaspor",11,3,2,6,12,20],["kastamonu",11,2,1,8,8,38,3],["arnavutkoy",11,1,1,9,7,23,3],["hatayspor",11,1,1,9,5,22,9],["adanademir",11,2,1,8,10,27,57]],
+  results:[["sebat",5,1,"adanademir"],["mus",2,0,"gebze"],["inegolkafkas",0,0,"corlu"],["somaspor",1,2,"arnavutkoy"],["ankaraspor",1,1,"aliaga"],["aksaray",4,1,"hatayspor"],["erbaa",0,0,"elazig"],["kastamonu",1,6,"urfa"],["menemen",0,4,"isparta"]]},
+ {id:"2lig-kirmizi",name:"Nesine 2. Lig Kırmızı Grup",short:"2. Lig Kırmızı",logo:"2nd-lig.png",week:11,zones:{up:1,po:[2,5],down:4},src:"https://www.tff.org/default.aspx?pageID=976",
+  note:"Altınordu sezon öncesi ligden çekildi; grup 17 takımla sürüyor.",
+  table:[["orduspor52",10,8,0,2,22,10],["adana01",11,6,3,2,22,14],["erzincan",10,6,3,1,19,11],["ankarademir",11,6,2,3,29,16],["istiklal",11,6,2,3,21,14],["sakaryaspor",10,6,1,3,20,14],["kutahya",11,5,1,5,17,20],["beyoglu",10,4,3,3,19,14],["trabzon1461",10,4,3,3,18,17],["karacabey",10,4,3,3,12,16],["bingol",11,3,4,4,10,12],["kirklareli",10,2,3,5,8,15],["fethiye",10,2,2,6,10,20],["ankaragucu",10,2,4,4,16,15,3],["serik",11,2,4,5,11,17,3],["inegolspor",10,1,2,7,10,18,3],["iskenderun",10,0,2,8,6,27,3]],
+  results:[["adana01",3,0,"trabzon1461"],["istiklal",5,1,"fethiye"],["iskenderun",0,1,"karacabey"],["kutahya",2,1,"ankaragucu"],["kirklareli",1,0,"inegolspor"],["beyoglu",1,1,"serik"],["erzincan",1,0,"bingol"],["sakaryaspor",1,2,"ankarademir"]]},
+ {id:"3lig-1",name:"Nesine 3. Lig 1. Grup",short:"3. Lig 1. Grup",logo:"",week:12,zones:{up:1,po:[0,0],down:0},src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3543",
+  table:[["fatsa",12,7,3,2,19,8],["pazarspor",12,6,4,2,18,10],["kucukcekmece",12,5,5,2,19,16],["karabuk",12,5,3,4,15,16],["kartal",12,4,5,3,21,15],["orduspor67",12,4,5,3,20,17],["duzce",12,4,5,3,17,14],["silivri",12,5,2,5,16,15],["amasya",12,4,5,3,13,13],["yalova",12,4,4,4,18,21],["inkilap",12,4,3,5,17,22],["eregli",12,3,6,3,10,15],["zonguldakspor",12,3,5,4,16,16],["galata",12,3,5,4,12,12],["beykoz",12,3,5,4,15,16],["golcuk",12,2,6,4,16,20],["tokat",12,3,3,6,13,18],["buyukcekmece",12,0,4,8,9,20]],
+  results:[["amasya",1,1,"zonguldakspor"],["orduspor67",3,1,"beykoz"],["eregli",2,4,"pazarspor"],["fatsa",0,1,"duzce"],["kartal",2,2,"kucukcekmece"],["silivri",3,1,"inkilap"],["yalova",1,0,"galata"],["golcuk",3,2,"tokat"],["buyukcekmece",0,1,"karabuk"]]},
+ {id:"3lig-2",name:"Nesine 3. Lig 2. Grup",short:"3. Lig 2. Grup",logo:"",week:12,zones:{up:1,po:[0,0],down:0},src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3544",
+  table:[["etimesgut",12,8,2,2,24,6],["eskisehirspor",12,7,4,1,33,12],["gemlik",12,7,4,1,22,6],["balikesirspor",12,7,3,2,31,19],["karsiyaka",12,7,3,2,19,8],["bursayildirim",12,6,5,1,16,10],["eskisehiranadolu",12,6,4,2,19,9],["ayvalik",12,6,4,2,19,14],["bigaspor",12,6,2,4,18,15],["gaziemir",12,4,1,7,14,25],["kepez",12,3,2,7,11,17],["alanya1221",12,3,2,7,14,27],["usak",12,2,4,6,10,15],["altay",12,2,4,6,8,21],["soke",12,1,6,5,15,23],["bucaspor",12,2,2,8,10,18],["denizliiy",12,1,5,6,6,22],["aksehir",12,1,1,10,8,30]],
+  results:[["balikesirspor",1,1,"eskisehiranadolu"],["usak",1,0,"soke"],["bucaspor",1,2,"karsiyaka"],["etimesgut",5,0,"gaziemir"],["gemlik",2,0,"bigaspor"],["eskisehirspor",2,2,"ayvalik"],["aksehir",1,3,"kepez"],["alanya1221",2,0,"denizliiy"],["altay",0,1,"bursayildirim"]]},
+ {id:"3lig-3",name:"Nesine 3. Lig 3. Grup",short:"3. Lig 3. Grup",logo:"",week:12,zones:{up:1,po:[0,0],down:0},src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3545",
+  note:"Osmaniyespor-Yeni Malatyaspor ve Yeni Mersin İdmanyurdu-Karaman FK maçlarının skoru henüz işlenmedi.",
+  table:[["malatyayesilyurt",12,9,3,0,46,10],["erciyes38",12,9,2,1,29,12],["karakopru",12,8,2,2,30,13],["mazidagi",12,7,4,1,21,6],["nigde",12,8,1,3,24,14],["kirsehir",12,7,3,2,32,15],["bitlis",12,7,2,3,22,10],["mersiniy",11,7,0,4,16,10],["kirikkale",11,6,2,3,20,13],["osmaniye",11,5,1,5,18,18],["adaletgucu",12,4,1,7,20,26],["agri",12,3,2,7,11,19],["diyarbekir",12,3,1,8,13,17],["yozgat",12,2,3,7,7,27],["silifke",12,2,2,8,12,25],["karaman",11,2,0,9,8,35],["adanaspor",12,1,1,10,10,39],["yenimalatya",10,0,0,10,0,30,3]],
+  results:[["adanaspor",4,0,"yozgat"],["mazidagi",2,0,"nigde"],["karakopru",4,1,"agri"],["diyarbekir",3,1,"silifke"],["kirikkale",3,0,"bitlis"],["erciyes38",3,1,"kirsehir"],["malatyayesilyurt",6,2,"adaletgucu"]]}
+];
+
+// Haberler: kısa özetler, her biri kaynağına bağlanır.
+const NEWS=[
+ {id:"bursaspor-zirve",league:"1lig",club:"bursaspor",tag:"Puan durumu",date:"8 Kasım 2026",
+  title:"Bursaspor, 14 haftanın ardından 1. Lig'in zirvesinde",
+  body:["Geçen sezon 2. Lig'den yükselen Bursaspor, 14. haftada Antalya deplasmanından 1-1'lik beraberlikle döndü ve 32 puanla liderliğini korudu.","Kayserispor 30 puanla ikinci, Iğdır FK 28 puanla üçüncü sırada. Kayserispor bu hafta Ümraniye'de 2-1 yenildi."],
+  src:"https://www.tff.org/default.aspx?pageID=142",srcName:"TFF"},
+ {id:"sakaryaspor-geriledi",league:"2lig-kirmizi",club:"sakaryaspor",tag:"Maç sonu",date:"15 Kasım 2026",
+  title:"Sakaryaspor üst üste üçüncü kez kaybetti, altıncı sıraya geriledi",
+  body:["Sezona şampiyonluk hedefiyle başlayan Sakaryaspor, 11. haftada sahasında Ankara Demirspor'a 2-1 yenildi.","Yeşil-siyahlılar 19 puanda kaldı ve lider 52 Orduspor'un 5 puan gerisine düştü."],
+  src:"https://www.sakaryayenihaber.com/haber/29162065/2-ligde-puan-durumu-degisti-sakaryaspor-6-siraya-geriledi",srcName:"Sakarya Yenihaber"},
+ {id:"orduspor-lider",league:"2lig-kirmizi",club:"orduspor52",tag:"Puan durumu",date:"14 Kasım 2026",
+  title:"52 Orduspor, Kırmızı Grup'ta zirvede",
+  body:["11. haftayı maç yapmadan geçiren 52 Orduspor, 24 puanla liderliğini sürdürdü.","Adana 01 FK ve Erzincanspor 21'er puanla takipte."],
+  src:"https://www.ensondakika.com.tr/futbol-nesine-2-lig-de-gorunum/740961/",srcName:"En Son Dakika (AA)"},
+ {id:"beyaz-zirve",league:"2lig-beyaz",club:"elazig",tag:"Puan durumu",date:"15 Kasım 2026",
+  title:"Beyaz Grup'ta Elazığspor ile Muşspor 26'şar puanla zirvede",
+  body:["Muşspor, 11. haftada Güzide Gebzespor'u 2-0 yenerek liderle puanları eşitledi. Elazığspor, Erbaa deplasmanından golsüz beraberlikle döndü ve averajla ilk sırada kaldı.","Gebze 24, Aliağa FK 23 puanla takipte."],
+  src:"https://www.tff.org/default.aspx?pageID=976",srcName:"TFF"},
+ {id:"fatsa-lider",league:"3lig-1",club:"fatsa",tag:"Puan durumu",date:"15 Kasım 2026",
+  title:"Fatsa Belediyespor yenilgiye rağmen 3. Lig 1. Grup'ta lider",
+  body:["Fatsa Belediyespor 12. haftada sahasında Düzcespor'a 1-0 yenildi ama 24 puanla zirvede kaldı.","Kdz. Ereğli deplasmanında 4-2 kazanan Pazarspor 22 puana yükseldi."],
+  src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3543",srcName:"TFF"},
+ {id:"etimesgut-lider",league:"3lig-2",club:"etimesgut",tag:"Puan durumu",date:"15 Kasım 2026",
+  title:"Etimesgut Spor, 5-0'lık galibiyetle 3. Lig 2. Grup'un zirvesine yerleşti",
+  body:["Etimesgut Spor 12. haftada Gaziemir GOG Spor'u 5-0 yendi ve 26 puanla liderliğe yükseldi.","Eskişehirspor ile Gemlik Sümerbeyspor 25'er puanla takipte. Karşıyaka, Bucaspor 1928 deplasmanından 2-1 galibiyetle döndü."],
+  src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3544",srcName:"TFF"},
+ {id:"yesilyurt-lider",league:"3lig-3",club:"malatyayesilyurt",tag:"Maç sonu",date:"15 Kasım 2026",
+  title:"Malatya Yeşilyurtspor yenilgisiz liderliğini sürdürdü",
+  body:["Malatya Yeşilyurtspor, Adana Adaletgücü'nü 6-2 yenerek 12 maçta 30 puana ulaştı ve 46 golle grubun en golcü takımı oldu.","Erciyes 38 FSK 29 puanla bir puan geride."],
+  src:"https://www.tff.org/Default.aspx?pageID=971&grupID=3545",srcName:"TFF"},
+ {id:"altinordu",league:"2lig-kirmizi",club:null,tag:"Kulüp",date:"1 Temmuz 2026",
+  title:"Altınordu 2026-27 sezonunda lige katılmama kararı aldı",
+  body:["İzmir ekibi Altınordu, yeni sezonda 2. Lig'de mücadele etmeyeceğini açıkladı.","TFF, Altınordu'yu küme düşmüş saydı; Kırmızı Grup bu sezon 17 takımla oynanıyor."],
+  src:"https://www.fanatik.com.tr/haberler/tff-2.lig",srcName:"Fanatik"},
+ {id:"takvim",league:"1lig",club:null,tag:"Fikstür",date:"Temmuz 2026",
+  title:"1. Lig'de ilk yarı 18-21 Aralık'ta bitiyor",
+  body:["20 takımlı 1. Lig'de ilk yarı 18-21 Aralık 2026'da oynanacak 19. haftayla tamamlanacak. İkinci yarı 8-11 Ocak 2027'de başlayacak.","Normal sezon 8 Mayıs 2027'de sona erecek. 5, 10, 26 ve 34. haftalar hafta içi oynanıyor."],
+  src:"https://www.benguturk.com/spor/1-ligde-2026-2027-sezonu-fiksturu-aciklandi-273875h",srcName:"Bengütürk"}
+];
+/* ======================= VERİLER SONU ======================= */
+
+const CLUBS={};
+for(const L of LEAGUES)for(const r of L.table){const d=C[r[0]];CLUBS[r[0]]={id:r[0],name:d[0],short:d[1],city:d[2]||"",stadium:d[3]||"",c1:d[4]||"#1d5a3a",c2:d[5]||"#f3f6f1",logo:d[6]||"",league:L.id}}
+const $=s=>document.querySelector(s),app=$("#app");
+const club=id=>CLUBS[id],league=id=>LEAGUES.find(l=>l.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shield=(c,lg)=>`<span class="crest${lg?" lg":""}" style="background:linear-gradient(135deg,${c.c1} 50%,${c.c2} 50%)" aria-hidden="true">${esc(c.short)}</span>`;
+// Logo: "logolar/<kulüp-id>.png" dosyası varsa o gösterilir, yoksa renkli kalkana döner.
+const logoSrc=c=>{const f=LOGOS[c.id]||c.logo||"";return !f?"":/^(https?:|\/)/.test(f)||f.includes("/")?f:LOGO_DIR+f};
+const lgLogo=(L,big)=>L.logo?`<img class="lglogo${big?" big":""}" src="${esc(/\//.test(L.logo)?L.logo:LOGO_DIR+L.logo)}" alt="" onerror="this.remove()">`:"";
+const crest=(c,lg)=>!logoSrc(c)?shield(c,lg):`<img class="crest logo${lg?" lg":""}" src="${esc(logoSrc(c))}" alt="" data-id="${c.id}" data-lg="${lg?1:""}" onerror="window.__noLogo&&window.__noLogo(this)">`;
+window.__noLogo=img=>{const c=club(img.dataset.id);if(!c)return;if(c.apiLogo&&img.getAttribute("src")!==c.apiLogo){img.src=c.apiLogo;return}img.outerHTML=shield(c,img.dataset.lg)};
+function rows(lid){return league(lid).table.map(([id,p,w,d,l,gf,ga,pen=0])=>({c:club(id),p,w,d,l,gf,ga,pen,gd:gf-ga,pts:w*3+d-pen}))}
+function zone(L,i,n){if(L.rowZones){const r=L.rowZones[i];return r?"z-"+r:""}const z=L.zones;if(i<z.up)return"z-up";if(i+1>=z.po[0]&&i+1<=z.po[1])return"z-po";if(z.down&&i>=n-z.down)return"z-down";return""}
+
+function art(c,seed){
+  let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;const r=()=>(h=(h*1664525+1013904223)>>>0)/4294967296;
+  const c1=c?c.c1:"#1d5a3a",c2=c?c.c2:"#f5c518";let flags="";
+  for(let i=0;i<14;i++){const x=10+i*45+r()*10,hh=40+r()*30;flags+=`<rect x="${x}" y="${150-hh}" width="26" height="${hh}" fill="${i%2?c1:c2}" opacity=".9"/>`}
+  return `<svg viewBox="0 0 640 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="640" height="320" fill="${c1}"/><rect width="640" height="170" fill="#0e1a12" opacity=".55"/>${flags}<rect y="150" width="640" height="24" fill="#0e1a12" opacity=".7"/><rect y="174" width="640" height="146" fill="#1d5a3a"/>${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${i*80}" y="174" width="40" height="146" fill="#fff" opacity=".04"/>`).join("")}<ellipse cx="320" cy="250" rx="110" ry="34" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/><line x1="0" y1="250" x2="640" y2="250" stroke="#fff" stroke-opacity=".35" stroke-width="2"/><circle cx="${200+r()*240}" cy="${235+r()*30}" r="9" fill="#fff"/><circle cx="560" cy="40" r="22" fill="#f5c518" opacity=".9"/></svg>`;
+}
+
+function board(lid){
+  const L=league(lid);
+  return `<div class="tabs" role="tablist">${LEAGUES.map(l=>`<button class="tab" role="tab" data-l="${l.id}" aria-selected="${l.id===lid}">${lgLogo(l)}${l.short}</button>`).join("")}</div>
+  <div class="board" aria-label="${esc(L.name)} sonuçları">${L.results.length?"":`<div class="fx" style="grid-template-columns:1fr"><span class="sc up" style="text-align:center">Son 7 günde oynanmış maç yok</span></div>`}${L.results.map(([h,hs,as,a])=>{const H=club(h),A=club(a);return `<div class="fx">
+    <a class="t" href="#kulup-${H.id}">${crest(H)}<span>${esc(H.name)}</span></a>
+    <div class="sc">${hs} – ${as}<small>Maç sonu</small></div>
+    <a class="t r" href="#kulup-${A.id}"><span>${esc(A.name)}</span>${crest(A)}</a></div>`}).join("")}</div>
+  <p class="note">${esc(L.name)}${L.week?`, ${L.week}. hafta`:", son 7 gün"}. Kaynak: ${/^http/.test(L.src)?`<a href="${L.src}">TFF</a>`:"API-Football"}.</p>`;
+}
+function standHead(lid){const L=league(lid);return `<h3 class="lgh" style="font-size:28px;margin:4px 0 14px">${lgLogo(L,1)}${esc(L.name)}${L.week?`, ${L.week}. hafta`:""}</h3>`}
+function stand(lid,mini){
+  const L=league(lid),rs=rows(lid),n=rs.length,list=mini?rs.slice(0,6):rs,pens=rs.filter(x=>x.pen>0);
+  const z=L.rowZones?{up:L.rowZones.includes("up"),po:[0,+L.rowZones.includes("po")],down:L.rowZones.includes("down")}:L.zones;
+  const leg=[z.up?`<span style="--c:var(--up)">${L.id==="superlig"?"Avrupa kupaları":"Doğrudan üst lig"}</span>`:"",z.po[1]?`<span style="--c:var(--po)">Play-off</span>`:"",z.down?`<span style="--c:var(--down)">Küme düşme</span>`:""].join("");
+  return `<div class="panel ${mini?"mini":""}"><div class="scroll"><table>
+  <thead><tr><th style="text-align:center">#</th><th class="l">Takım</th><th>O</th>${mini?"":`<th class="hide-s">G</th><th class="hide-s">B</th><th class="hide-s">M</th><th class="hide-s">A</th><th class="hide-s">Y</th>`}<th>Av</th><th>P</th></tr></thead>
+  <tbody>${list.map((x,i)=>`<tr class="${zone(L,i,n)}"><td class="pos">${i+1}</td><td class="l tm"><a href="#kulup-${x.c.id}">${crest(x.c)}${esc(x.c.name)}${x.pen>0?"*":""}</a></td><td>${x.p}</td>
+  ${mini?"":`<td class="hide-s">${x.w}</td><td class="hide-s">${x.d}</td><td class="hide-s">${x.l}</td><td class="hide-s">${x.gf}</td><td class="hide-s">${x.ga}</td>`}<td>${x.gd>0?"+":""}${x.gd}</td><td class="pts">${x.pts}</td></tr>`).join("")}</tbody></table></div>
+  ${mini?"":`<div class="legend">${leg}</div>${pens.length?`<p class="demo" style="padding:0 16px">* Ceza puanı silinen takımlar: ${pens.map(x=>`${esc(x.c.name)} (${x.pen})`).join(", ")}.</p>`:""}${L.note?`<p class="demo" style="padding:0 16px">${esc(L.note)}</p>`:""}`}</div>`;
+}
+const newsItem=n=>`<li><a href="#haber-${n.id}"><div class="ph">${art(club(n.club),n.id)}</div><div><span class="kicker">${esc(n.tag)}</span><h3>${esc(n.title)}</h3><span class="meta">${esc((league(n.league)||{}).short||"")}, ${esc(n.date)}</span></div></a></li>`;
+const clubCard=c=>`<a class="club" href="#kulup-${c.id}">${crest(c)}<div><b>${esc(c.name)}</b><span>${c.city?esc(c.city)+", ":""}${esc(league(c.league).short)}</span></div></a>`;
+const srcLine=()=>`<p class="demo">Veriler ${SOURCE==="TFF"?"TFF'nin resmi puan cetvellerinden":"API-Football'dan"} alınmıştır, ${esc(UPDATED)} itibarıyla.</p>`;
+
+let boardLeague="1lig",standLeague="1lig";
+const views={
+ ana(){
+  const lead=NEWS[0];
+  return `<section class="pitch band"><div class="wrap">
+   <h1>Hafta sonu sahada ne oldu?</h1>
+   <p class="lead">1. Lig'den 3. Lig'e, Türkiye'nin alt liglerinden sonuçlar, puan durumları ve kulüp haberleri.</p>
+   <div id="board">${board(boardLeague)}</div></div></section>
+  <section class="band"><div class="wrap cols">
+   <div><div class="sh"><h2>Son haberler</h2><a href="#haberler">Tüm haberler</a></div>
+    <a class="lead-story" href="#haber-${lead.id}"><div class="ph">${art(club(lead.club),lead.id)}</div><div class="tx"><span class="kicker">${esc(lead.tag)}</span><h3>${esc(lead.title)}</h3><span class="meta">${esc(league(lead.league).short)}, ${esc(lead.date)}</span></div></a>
+    <ul class="nl">${NEWS.slice(1,4).map(newsItem).join("")}</ul></div>
+   <aside><div class="sh"><h2 class="lgh">${lgLogo(league("1lig"),1)}1. Lig zirvesi</h2><a href="#puan">Tam tablo</a></div>${stand("1lig",true)}
+    <div class="sh" style="margin-top:28px"><h2>Grup liderleri</h2><a href="#kulupler">Tüm kulüpler</a></div>
+    <div class="clubs" style="grid-template-columns:minmax(0,1fr)">${LEAGUES.filter(l=>l.id!=="1lig"&&l.id!=="superlig"&&l.table.length).map(l=>clubCard(club(l.table[0][0]))).join("")}</div></aside>
+  </div></section>`;
+ },
+ puan(){
+  return `<section class="band"><div class="wrap"><div class="sh"><h2 style="font-size:44px">Puan durumu</h2></div>
+   <div class="sel" id="sel">${LEAGUES.map(l=>`<button data-l="${l.id}" aria-pressed="${l.id===standLeague}">${lgLogo(l)}${l.name}</button>`).join("")}</div>
+   <div id="tbl">${standHead(standLeague)}${stand(standLeague)}</div>${srcLine()}</div></section>`;
+ },
+ haberler(){
+  return `<section class="band"><div class="wrap" style="max-width:900px"><div class="sh"><h2 style="font-size:44px">Haberler</h2></div>
+   <div class="sel" id="nsel"><button data-l="" aria-pressed="true">Tümü</button>${LEAGUES.map(l=>`<button data-l="${l.id}" aria-pressed="false">${lgLogo(l)}${l.short}</button>`).join("")}</div>
+   <ul class="nl" id="nlist">${NEWS.map(newsItem).join("")}</ul></div></section>`;
+ },
+ kulupler(){
+  return `<section class="band"><div class="wrap"><div class="sh"><h2 style="font-size:44px">Kulüpler</h2></div>
+   <label for="q" class="meta">Kulüp ya da şehir ara</label><br><input id="q" class="search" type="search" placeholder="Örneğin Bolu, Ordu" autocomplete="off">
+   <div id="clist">${clubsByLeague("")}</div></div></section>`;
+ },
+ kulup(id){
+  const c=club(id);if(!c)return notFound();
+  const L=league(c.league),rs=rows(c.league),i=rs.findIndex(x=>x.c.id===id),x=rs[i];
+  const res=L.results.find(r=>r[0]===id||r[3]===id);
+  const rel=NEWS.filter(n=>n.club===id).concat(NEWS.filter(n=>n.club!==id&&n.league===c.league)).slice(0,3);
+  const dark=c.c2.toLowerCase()==="#ffffff"||c.c2==="#f3f6f1"?"#1d5a3a":c.c2;
+  return `<section class="chero" style="background:linear-gradient(120deg,${c.c1} 0 55%,${dark} 55%)"><div class="wrap in">${crest(c,1)}
+   <div><h1 style="text-shadow:0 2px 8px rgba(0,0,0,.35)">${esc(c.name)}</h1><p style="margin:6px 0 0;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.4)">${c.city?esc(c.city)+", ":""}${esc(L.name)}</p></div></div></section>
+   <section class="band"><div class="wrap">
+   <dl class="facts">${c.founded?`<div><dt>Kuruluş</dt><dd>${c.founded}</dd></div>`:""}<div><dt>Sıralama</dt><dd>${i+1}. sıra</dd></div><div><dt>Puan</dt><dd>${x.pts}${x.pen>0?` <small style="font-size:14px">(${x.pen} ceza)</small>`:""}</dd></div>
+   <div><dt>G-B-M</dt><dd>${x.w}-${x.d}-${x.l}</dd></div><div><dt>Gol (A:Y)</dt><dd>${x.gf}:${x.ga}</dd></div>
+   ${c.stadium?`<div><dt>Stadyum</dt><dd style="font-size:18px">${esc(c.stadium)}</dd></div>`:""}
+   ${res?`<div><dt>${L.week?L.week+". hafta":"Son maç"}</dt><dd style="font-size:18px">${esc(club(res[0]).short)} ${res[1]}-${res[2]} ${esc(club(res[3]).short)}</dd></div>`:""}</dl>
+   <div class="cols"><div><div class="sh"><h2>İlgili haberler</h2></div>${rel.length?`<ul class="nl">${rel.map(newsItem).join("")}</ul>`:`<div class="empty">Bu kulüp hakkında henüz haber yok.</div>`}</div>
+   <aside><div class="sh"><h2 class="lgh">${lgLogo(L,1)}${esc(L.short)}</h2><a href="#puan" data-std="${L.id}">Tam tablo</a></div>${stand(c.league,true)}</aside></div>${srcLine()}</div></section>`;
+ },
+ haber(id){
+  const n=NEWS.find(n=>n.id===id);if(!n)return notFound();const c=club(n.club);
+  return `<section class="band"><div class="wrap"><a class="back" href="#haberler">Haberlere dön</a><article>
+   <span class="kicker">${esc(n.tag)}, ${esc((league(n.league)||{}).name||"")}</span><h1>${esc(n.title)}</h1><span class="meta">${esc(n.date)}</span>
+   <div class="ph">${art(c,n.id)}</div>${n.body.map(p=>`<p>${esc(p)}</p>`).join("")}
+   <p class="meta">Kaynak: <a href="${esc(n.src)}">${esc(n.srcName)}</a></p>
+   ${c?`<p><a href="#kulup-${c.id}" class="club" style="display:inline-flex">${crest(c)}<span><b>${esc(c.name)}</b>Kulüp sayfasına git</span></a></p>`:""}</article></div></section>`;
+ }
+};
+function clubsByLeague(q){
+  q=q.trim().toLocaleLowerCase("tr");
+  const out=LEAGUES.map(l=>{const cs=l.table.map(r=>club(r[0])).filter(c=>!q||(c.name+" "+c.city).toLocaleLowerCase("tr").includes(q)).sort((a,b)=>a.name.localeCompare(b.name,"tr"));
+    return cs.length?`<h3 class="lgh" style="font-size:24px;margin:24px 0 12px">${lgLogo(l,1)}${esc(l.name)}</h3><div class="clubs">${cs.map(clubCard).join("")}</div>`:""}).join("");
+  return out||`<div class="empty">"${esc(q)}" ile eşleşen kulüp bulunamadı. Farklı bir kulüp ya da şehir adı deneyin.</div>`;
+}
+function notFound(){return `<section class="band"><div class="wrap"><div class="empty">Aradığınız sayfa bulunamadı. <a href="#ana">Ana sayfaya dönün</a>.</div></div></section>`}
+
+function route(keep){
+  const h=(location.hash||"#ana").slice(1),m=h.match(/^(kulup|haber)-(.+)$/);
+  const key=m?m[1]:(views[h]?h:"ana");
+  app.innerHTML=m?views[key](m[2]):views[key]();
+  const sect=key==="kulup"?"kulupler":key==="haber"?"haberler":key;
+  document.querySelectorAll("#nav a").forEach(a=>{a.getAttribute("href")==="#"+sect?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current")});
+  if(!keep)window.scrollTo(0,0);
+}
+app.addEventListener("click",e=>{
+  const d=e.target.closest("[data-std]");if(d)standLeague=d.dataset.std;
+  const t=e.target.closest(".tab");if(t){boardLeague=t.dataset.l;$("#board").innerHTML=board(boardLeague);$(`.tab[data-l="${boardLeague}"]`).focus();return}
+  const s=e.target.closest("#sel button");if(s){standLeague=s.dataset.l;document.querySelectorAll("#sel button").forEach(b=>b.setAttribute("aria-pressed",b===s));$("#tbl").innerHTML=standHead(standLeague)+stand(standLeague);return}
+  const n=e.target.closest("#nsel button");if(n){document.querySelectorAll("#nsel button").forEach(b=>b.setAttribute("aria-pressed",b===n));
+    const list=NEWS.filter(x=>!n.dataset.l||x.league===n.dataset.l);$("#nlist").innerHTML=list.length?list.map(newsItem).join(""):`<li><div class="empty">Bu ligde henüz haber yok.</div></li>`}
+});
+app.addEventListener("input",e=>{if(e.target.id==="q")$("#clist").innerHTML=clubsByLeague(e.target.value)});
+addEventListener("hashchange",()=>route());route();
+/* ===== API verisi: veri/data.json varsa (GitHub'daki otomatik güncelleme yazar) onu kullan ===== */
+const slug=s=>String(s||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,ch=>({ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u",â:"a",î:"i",û:"u"}[ch])).normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const STOP=new Set(["fk","sk","fsk","as","a","s","futbol","kulubu","spor","jk","sporu"]);
+const toks=s=>slug(s).split("-").filter(t=>t&&!STOP.has(t));
+function sim(a,b){if(slug(a)===slug(b))return 100;const A=toks(a),B=toks(b);if(!A.length||!B.length)return 0;const SA=new Set(A),SB=new Set(B);
+  const inter=A.filter(t=>SB.has(t)).length;if(inter===Math.min(SA.size,SB.size))return 50+inter*5-Math.abs(SA.size-SB.size);return 0}
+function best(name,list,get){let top=null,sc=49;for(const x of list){const v=sim(name,get(x));if(v>sc){sc=v;top=x}}return top}
+const LEAGUE_LOGO={superlig:"super-lig.png","1lig":"1st-lig.png","2lig":"2nd-lig.png","3lig":""};
+function applyApi(d){
+  if(!d||!Array.isArray(d.tables)||!d.tables.length)return false;
+  const inline=Object.keys(C).map(id=>({id,name:C[id][0]})),used=new Set(),byApi={},teamInfo=d.teams||{},files=d.logos||[];
+  for(const k in CLUBS)delete CLUBS[k];
+  const mk=(tid,name,lid)=>{
+    if(byApi[tid])return byApi[tid];
+    const m=best(name,inline.filter(x=>!used.has(x.id)),x=>x.name),info=teamInfo[tid]||{};
+    let id,o;
+    if(m){used.add(m.id);const r=C[m.id];id=m.id;o={id,name:r[0],short:r[1],city:r[2]||info.city||"",stadium:r[3]||info.stadium||"",c1:r[4]||"#1d5a3a",c2:r[5]||"#f3f6f1",logo:r[6]||""}}
+    else{id="t"+tid;o={id,name,short:toks(name)[0]?toks(name)[0].slice(0,3).toLocaleUpperCase("tr"):name.slice(0,3),city:info.city||"",stadium:info.stadium||"",c1:"#1d5a3a",c2:"#f3f6f1",logo:""}}
+    if(!LOGOS[id]&&!o.logo){const f=best(name,files,f=>f.replace(/\.[a-z]+$/i,""));o.logo=f||info.logo||""}
+    o.apiLogo=info.logo||"";
+    o.founded=info.founded||null;o.league=lid;CLUBS[id]=o;byApi[tid]=id;return id};
+  const L2=d.tables.map(t=>{
+    const key=t.id.split("-")[0],rows=t.table.map(r=>{const id=mk(r.teamId,r.team,t.id);return [id,r.p,r.w,r.d,r.l,r.gf,r.ga,r.w*3+r.d-r.pts]});
+    return {id:t.id,name:t.name,short:t.short,logo:LEAGUE_LOGO[key]||t.leagueLogo||"",week:t.week,src:"API-Football",rowZones:t.table.map(r=>r.zone||""),zones:{up:0,po:[0,0],down:0},table:rows,
+      results:t.results.map(f=>[mk(f.homeId,f.home,t.id),f.hs,f.as,mk(f.awayId,f.away,t.id)])}});
+  LEAGUES.length=0;LEAGUES.push(...L2.sort((a,b)=>(a.id==="superlig"?-1:0)-(b.id==="superlig"?-1:0)));
+  const [dt,tm]=String(d.updated||"").split(" "),[y,mo,da]=(dt||"").split("-");
+  UPDATED=y?`${+da} ${["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"][mo-1]} ${y} ${tm||""}`.trim():UPDATED;SOURCE="API";
+  if(!league(boardLeague))boardLeague=LEAGUES[0].id;if(!league(standLeague))standLeague=LEAGUES[0].id;
+  return true}
+fetch("veri/data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(applyApi(d))route(true)}).catch(()=>{});
+
+}
+</script>
+</body>
+</html>
