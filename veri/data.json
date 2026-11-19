@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18 20:47",
+ "updated": "2026-11-19 05:00",
  "source": "TFF",
  "tables": [
   {
@@ -272,14 +272,6 @@
      "as": 2
     },
     {
-     "homeId": 3688,
-     "home": "Göztepe",
-     "awayId": 3665,
-     "away": "İstanbul Başakşehir FK",
-     "hs": 1,
-     "as": 2
-    },
-    {
      "homeId": 3604,
      "home": "Galatasaray",
      "awayId": 3678,
@@ -288,11 +280,11 @@
      "as": 3
     },
     {
-     "homeId": 3610,
-     "home": "Eyüpspor",
-     "awayId": 132,
-     "away": "Kocaelispor",
-     "hs": 0,
+     "homeId": 3688,
+     "home": "Göztepe",
+     "awayId": 3665,
+     "away": "İstanbul Başakşehir FK",
+     "hs": 1,
      "as": 2
     },
     {
@@ -304,6 +296,14 @@
      "as": 0
     },
     {
+     "homeId": 3610,
+     "home": "Eyüpspor",
+     "awayId": 132,
+     "away": "Kocaelispor",
+     "hs": 0,
+     "as": 2
+    },
+    {
      "homeId": 3590,
      "home": "Beşiktaş",
      "awayId": 3606,
@@ -312,20 +312,20 @@
      "as": 0
     },
     {
-     "homeId": 51,
-     "home": "Corendon Alanyaspor",
-     "awayId": 3596,
-     "away": "Trabzonspor",
-     "hs": 0,
-     "as": 2
-    },
-    {
      "homeId": 3199,
      "home": "Arca Çorum FK",
      "awayId": 3592,
      "away": "Fenerbahçe",
      "hs": 0,
      "as": 5
+    },
+    {
+     "homeId": 51,
+     "home": "Corendon Alanyaspor",
+     "awayId": 3596,
+     "away": "Trabzonspor",
+     "hs": 0,
+     "as": 2
     },
     {
      "homeId": 3631,
@@ -627,14 +627,6 @@
    ],
    "results": [
     {
-     "homeId": 52,
-     "home": "Antalyaspor",
-     "awayId": 3601,
-     "away": "Bursaspor",
-     "hs": 1,
-     "as": 1
-    },
-    {
      "homeId": 3602,
      "home": "SMS Grup Sarıyer",
      "awayId": 9387,
@@ -643,12 +635,20 @@
      "as": 1
     },
     {
-     "homeId": 2020,
-     "home": "Artı Değer Vanspor",
-     "awayId": 74,
-     "away": "Ekenler Beton Sivasspor",
-     "hs": 3,
+     "homeId": 52,
+     "home": "Antalyaspor",
+     "awayId": 3601,
+     "away": "Bursaspor",
+     "hs": 1,
      "as": 1
+    },
+    {
+     "homeId": 3623,
+     "home": "Orfa Yapı Pendikspor Futbol",
+     "awayId": 3617,
+     "away": "İstanbulspor",
+     "hs": 0,
+     "as": 2
     },
     {
      "homeId": 6,
@@ -659,20 +659,20 @@
      "as": 0
     },
     {
+     "homeId": 2020,
+     "home": "Artı Değer Vanspor",
+     "awayId": 74,
+     "away": "Ekenler Beton Sivasspor",
+     "hs": 3,
+     "as": 1
+    },
+    {
      "homeId": 82,
      "home": "Muğlaspor",
      "awayId": 964,
      "away": "Turka Esenler Erokspor",
      "hs": 0,
      "as": 5
-    },
-    {
-     "homeId": 3623,
-     "home": "Orfa Yapı Pendikspor Futbol",
-     "awayId": 3617,
-     "away": "İstanbulspor",
-     "hs": 0,
-     "as": 2
     },
     {
      "homeId": 3661,
@@ -691,20 +691,20 @@
      "as": 1
     },
     {
-     "homeId": 130,
-     "home": "Bandırmaspor",
-     "awayId": 3611,
-     "away": "Mısırlıcomtr Fatih Karagümrük",
-     "hs": 0,
-     "as": 4
-    },
-    {
      "homeId": 3593,
      "home": "Boluspor",
      "awayId": 4824,
      "away": "Bodrum FK",
      "hs": 1,
      "as": 2
+    },
+    {
+     "homeId": 130,
+     "home": "Bandırmaspor",
+     "awayId": 3611,
+     "away": "Mısırlıcomtr Fatih Karagümrük",
+     "hs": 0,
+     "as": 4
     }
    ]
   },
@@ -970,20 +970,12 @@
    ],
    "results": [
     {
-     "homeId": 746,
-     "home": "Güzide Gebzespor",
-     "awayId": 4355,
-     "away": "Ankaraspor",
+     "homeId": 31,
+     "home": "Kızılkaya Tarım Şanlıurfaspor",
+     "awayId": 3641,
+     "away": "Efor Çay Erbaaspor",
      "hs": 2,
      "as": 1
-    },
-    {
-     "homeId": 1484,
-     "home": "Isbaş Isparta 32spor",
-     "awayId": 497,
-     "away": "Somaspor",
-     "hs": 0,
-     "as": 0
     },
     {
      "homeId": 2720,
@@ -994,20 +986,28 @@
      "as": 0
     },
     {
-     "homeId": 5044,
-     "home": "Çorlu Spor 1947",
-     "awayId": 8722,
-     "away": "Muşspor",
-     "hs": 1,
-     "as": 4
-    },
-    {
      "homeId": 6039,
      "home": "Arkent Arnavutköy Belediyesi Futbol SK",
      "awayId": 6496,
      "away": "68 Aksaray Belediyespor",
      "hs": 2,
      "as": 3
+    },
+    {
+     "homeId": 37,
+     "home": "Seza Çimento Elazığspor",
+     "awayId": 1120,
+     "away": "Menemen",
+     "hs": 1,
+     "as": 1
+    },
+    {
+     "homeId": 746,
+     "home": "Güzide Gebzespor",
+     "awayId": 4355,
+     "away": "Ankaraspor",
+     "hs": 2,
+     "as": 1
     },
     {
      "homeId": 3603,
@@ -1018,6 +1018,14 @@
      "as": 2
     },
     {
+     "homeId": 1484,
+     "home": "Isbaş Isparta 32spor",
+     "awayId": 497,
+     "away": "Somaspor",
+     "hs": 0,
+     "as": 0
+    },
+    {
      "homeId": 121,
      "home": "Hatayspor",
      "awayId": 3276,
@@ -1026,20 +1034,12 @@
      "as": 2
     },
     {
-     "homeId": 31,
-     "home": "Kızılkaya Tarım Şanlıurfaspor",
-     "awayId": 3641,
-     "away": "Efor Çay Erbaaspor",
-     "hs": 2,
-     "as": 1
-    },
-    {
-     "homeId": 37,
-     "home": "Seza Çimento Elazığspor",
-     "awayId": 1120,
-     "away": "Menemen",
+     "homeId": 5044,
+     "home": "Çorlu Spor 1947",
+     "awayId": 8722,
+     "away": "Muşspor",
      "hs": 1,
-     "as": 1
+     "as": 4
     }
    ]
   },
@@ -1299,22 +1299,6 @@
      "as": 0
     },
     {
-     "homeId": 11,
-     "home": "Ankara Demirspor",
-     "awayId": 4910,
-     "away": "52 Orduspor FK",
-     "hs": 0,
-     "as": 2
-    },
-    {
-     "homeId": 58,
-     "home": "Fethiyespor",
-     "awayId": 133,
-     "away": "Kütahyaspor Futbolspor",
-     "hs": 2,
-     "as": 1
-    },
-    {
      "homeId": 131,
      "home": "Sultan Su İnegölspor",
      "awayId": 4258,
@@ -1323,10 +1307,18 @@
      "as": 0
     },
     {
-     "homeId": 4167,
-     "home": "Serik Spor Futbol",
-     "awayId": 2035,
-     "away": "Erzincan",
+     "homeId": 11,
+     "home": "Ankara Demirspor",
+     "awayId": 4910,
+     "away": "52 Orduspor FK",
+     "hs": 0,
+     "as": 2
+    },
+    {
+     "homeId": 7632,
+     "home": "12 Bingölspor",
+     "awayId": 3594,
+     "away": "Sakaryaspor",
      "hs": 0,
      "as": 1
     },
@@ -1339,6 +1331,14 @@
      "as": 3
     },
     {
+     "homeId": 4167,
+     "home": "Serik Spor Futbol",
+     "awayId": 2035,
+     "away": "Erzincan",
+     "hs": 0,
+     "as": 1
+    },
+    {
      "homeId": 3595,
      "home": "MKE Ankaragücü",
      "awayId": 50,
@@ -1347,11 +1347,11 @@
      "as": 1
     },
     {
-     "homeId": 7632,
-     "home": "12 Bingölspor",
-     "awayId": 3594,
-     "away": "Sakaryaspor",
-     "hs": 0,
+     "homeId": 58,
+     "home": "Fethiyespor",
+     "awayId": 133,
+     "away": "Kütahyaspor Futbolspor",
+     "hs": 2,
      "as": 1
     }
    ]
@@ -1618,12 +1618,12 @@
    ],
    "results": [
     {
-     "homeId": 3690,
-     "home": "Kdz.ereğli 1980spor",
-     "awayId": 3662,
-     "away": "Pazarspor",
-     "hs": 2,
-     "as": 4
+     "homeId": 4933,
+     "home": "Fatsa Belediyespor",
+     "awayId": 98,
+     "away": "Düzce Cam Düzcespor",
+     "hs": 0,
+     "as": 1
     },
     {
      "homeId": 3640,
@@ -1634,11 +1634,27 @@
      "as": 2
     },
     {
-     "homeId": 4933,
-     "home": "Fatsa Belediyespor",
-     "awayId": 98,
-     "away": "Düzce Cam Düzcespor",
-     "hs": 0,
+     "homeId": 3690,
+     "home": "Kdz.ereğli 1980spor",
+     "awayId": 3662,
+     "away": "Pazarspor",
+     "hs": 2,
+     "as": 4
+    },
+    {
+     "homeId": 3087,
+     "home": "Yalova FK 77spor",
+     "awayId": 42,
+     "away": "Galataspor",
+     "hs": 1,
+     "as": 0
+    },
+    {
+     "homeId": 44,
+     "home": "Silivrispor",
+     "awayId": 1465,
+     "away": "İnkılap Futbolspor",
+     "hs": 3,
      "as": 1
     },
     {
@@ -1646,30 +1662,6 @@
      "home": "Orduspor 1967",
      "awayId": 2744,
      "away": "Beykoz Anadoluspor",
-     "hs": 3,
-     "as": 1
-    },
-    {
-     "homeId": 4491,
-     "home": "Kartal Bulvar Kartalimenspor",
-     "awayId": 1092,
-     "away": "Küçükçekmece Sinopspor",
-     "hs": 2,
-     "as": 2
-    },
-    {
-     "homeId": 4485,
-     "home": "Büyükçekmece Gücü Fkspor",
-     "awayId": 10580,
-     "away": "Karabük İdmanyurduspor",
-     "hs": 0,
-     "as": 1
-    },
-    {
-     "homeId": 44,
-     "home": "Silivrispor",
-     "awayId": 1465,
-     "away": "İnkılap Futbolspor",
      "hs": 3,
      "as": 1
     },
@@ -1682,12 +1674,20 @@
      "as": 1
     },
     {
-     "homeId": 3087,
-     "home": "Yalova FK 77spor",
-     "awayId": 42,
-     "away": "Galataspor",
-     "hs": 1,
-     "as": 0
+     "homeId": 4485,
+     "home": "Büyükçekmece Gücü Fkspor",
+     "awayId": 10580,
+     "away": "Karabük İdmanyurduspor",
+     "hs": 0,
+     "as": 1
+    },
+    {
+     "homeId": 4491,
+     "home": "Kartal Bulvar Kartalimenspor",
+     "awayId": 1092,
+     "away": "Küçükçekmece Sinopspor",
+     "hs": 2,
+     "as": 2
     }
    ]
   },
@@ -2288,43 +2288,11 @@
    ],
    "results": [
     {
-     "homeId": 4844,
-     "home": "Malatya Yeşilyurtspor",
-     "awayId": 8742,
-     "away": "Adana Adaletgücü Spor Sportif Faaliyetler",
-     "hs": 6,
-     "as": 2
-    },
-    {
-     "homeId": 4398,
-     "home": "Açıkalın Erciyes 38 Futbolspor",
-     "awayId": 4499,
-     "away": "Ejderoğlu Kırşehir Futbolspor",
-     "hs": 3,
-     "as": 1
-    },
-    {
-     "homeId": 4517,
-     "home": "Halil Bayram İnşaat Karaköprü Belediyespor",
-     "awayId": 7890,
-     "away": "Ağrı 1970spor",
-     "hs": 4,
-     "as": 1
-    },
-    {
      "homeId": 10337,
      "home": "Eti Gübre Mazıdağı Fosfatspor",
      "awayId": 9399,
      "away": "Niğde Belediyesispor",
      "hs": 2,
-     "as": 0
-    },
-    {
-     "homeId": 3605,
-     "home": "Adanaspor",
-     "awayId": 7787,
-     "away": "Yozgat Belediyesi Bozokspor",
-     "hs": 4,
      "as": 0
     },
     {
@@ -2336,12 +2304,44 @@
      "as": 0
     },
     {
+     "homeId": 4517,
+     "home": "Halil Bayram İnşaat Karaköprü Belediyespor",
+     "awayId": 7890,
+     "away": "Ağrı 1970spor",
+     "hs": 4,
+     "as": 1
+    },
+    {
      "homeId": 3196,
      "home": "Diyarbekirspor",
      "awayId": 3666,
      "away": "1964 Silifkespor",
      "hs": 3,
      "as": 1
+    },
+    {
+     "homeId": 3605,
+     "home": "Adanaspor",
+     "awayId": 7787,
+     "away": "Yozgat Belediyesi Bozokspor",
+     "hs": 4,
+     "as": 0
+    },
+    {
+     "homeId": 4398,
+     "home": "Açıkalın Erciyes 38 Futbolspor",
+     "awayId": 4499,
+     "away": "Ejderoğlu Kırşehir Futbolspor",
+     "hs": 3,
+     "as": 1
+    },
+    {
+     "homeId": 4844,
+     "home": "Malatya Yeşilyurtspor",
+     "awayId": 8742,
+     "away": "Adana Adaletgücü Spor Sportif Faaliyetler",
+     "hs": 6,
+     "as": 2
     },
     {
      "homeId": 3051,
